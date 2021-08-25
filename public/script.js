@@ -9,7 +9,6 @@ $(function () {
         success: function (data) {
             let issues = [];
             data.forEach(function (ele) {
-                console.log(ele);
                 let openstatus;
                 (ele.open) ? openstatus = 'open' : openstatus = 'closed';
                 let single = [
@@ -83,6 +82,7 @@ $(function() {
         data: $('#testForm2').serialize(),
         success: function(data) {
           $('#jsonResult').text(JSON.stringify(data));
+          console.log(data)
         }
       });
       e.preventDefault();
