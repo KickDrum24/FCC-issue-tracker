@@ -151,7 +151,8 @@ module.exports = function (app) {
             });
           }
         } else {
-          res.status(400).send(err.message);
+          res.json({ error: 'could not delete', '_id': req.body._id })
+          // res.status(400).send(err.message);
         }
       });
     });
