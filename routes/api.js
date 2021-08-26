@@ -126,9 +126,12 @@ module.exports = function (app) {
         if (!err) {
           if (!result) {
             res.status(404).send('project was not found');
-          }
+          } 
           //look for and remove issue
           else {
+            if (!req.body._id){
+              res.json({ error: 'missing _id' })
+            }
             result.issues.id(req.body._id).remove((removeerr, removresult) => {
               if (removeerr) {
                 res.status(400).send(removeerr.message);
@@ -137,9 +140,13 @@ module.exports = function (app) {
             result.markModified('issues');
             result.save(function (saveerr, saveresult) {
               if (!saveerr) {
-                res.status(200).send(saveresult);
+                console.log(req.body._id + " deleted")
+                // res.json({ result: 'successfully deleted', '_id': req.body._id})
+                res.status(200).send({ result: 'successfully deleted', '_id': req.body._id});
               } else {
-                res.status(400).send(saveerr.message);
+                res.status(400).send({ error: 'could not delete', '_id': req.body._id })
+                
+                // res.status(400).send(saveerr.message);
               }
             });
           }
