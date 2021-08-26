@@ -58,7 +58,7 @@ $(function () {
             type: "DELETE",
             url: url,
             data: { _id: $(this).attr('id') },
-            success: function (data) { alert(data); window.location.reload(true); }
+            success: function () { alert("Issue Deleted"); window.location.reload(true); }
         });
         e.preventDefault();
     });

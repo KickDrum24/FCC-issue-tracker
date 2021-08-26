@@ -142,9 +142,9 @@ module.exports = function (app) {
               if (!saveerr) {
                 console.log(req.body._id + " deleted")
                 // res.json({ result: 'successfully deleted', '_id': req.body._id})
-                res.status(200).send({ result: 'successfully deleted', '_id': req.body._id});
+                res.json({ result: 'successfully deleted', '_id': req.body._id});
               } else {
-                res.status(400).send({ error: 'could not delete', '_id': req.body._id })
+                res.json({ error: 'could not delete', '_id': req.body._id })
                 
                 // res.status(400).send(saveerr.message);
               }
