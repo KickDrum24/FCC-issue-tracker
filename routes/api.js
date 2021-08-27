@@ -93,7 +93,8 @@ module.exports = function (app) {
                 return;
               }
             if (!result.issues.id(req.body._id))  {
-              res.json({error: 'issue does not exist'})
+              res.json({error: 'could not update', '_id': _id })
+              return;
             }
             if (req.body.issue_title){
               result.issues.id(req.body._id).issue_title = req.body.issue_title;
