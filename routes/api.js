@@ -115,7 +115,7 @@ module.exports = function (app) {
             result.save(function (saveerr, saveresult) {
               if (!saveerr) {
                 // res.status(200).send(saveresult);
-                res.json({  result: 'successfully updated', '_id': req.body._id })
+                res.json({  "result" : 'successfully updated', '_id': req.body._id })
               } else {
                 res.json({ error: 'could not update', '_id': req.body._id })
                 // res.status(400).send(saveerr.message);
