@@ -83,7 +83,7 @@ module.exports = function (app) {
             res.status(404).send('Project was not found');
           }
           else {
-            if (!req.body._id || !result.issues.id(req.body._id)){
+            if (!req.body._id){
               res.json({ error: 'missing _id' })
               return;
             }
@@ -92,6 +92,9 @@ module.exports = function (app) {
                 res.json({ error: 'no update field(s) sent', '_id': req.body._id })
                 return;
               }
+            if (!result.issues.id(req.body._id))  {
+              res.json({error: 'issue does not exist'})
+            }
             if (req.body.issue_title){
               result.issues.id(req.body._id).issue_title = req.body.issue_title;
             }
