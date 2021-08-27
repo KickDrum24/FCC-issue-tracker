@@ -107,7 +107,7 @@ module.exports = function (app) {
             if(req.body.status_text){
               result.issues.id(req.body._id).status_text = req.body.status_text;
             }
-            result.issues.id(req.body._id).updated_on = Date();
+            // result.issues.id(req.body._id).updated_on = Date();
             // result.issues.id(req.body._id).issue_title = req.body.issue_title;
             // result.issues.id(req.body._id).issue_text = req.body.issue_text;
             // result.issues.id(req.body._id).created_by = req.body.created_by;
@@ -117,6 +117,7 @@ module.exports = function (app) {
             result.save(function (saveerr, saveresult) {
               if (!saveerr) {
                 // res.status(200).send(saveresult);
+                result.issues.id(req.body._id).updated_on = Date();
                 res.json({  "result" : 'successfully updated', '_id': req.body._id })
               } else {
                 res.json({ error: 'could not update', '_id': req.body._id })
