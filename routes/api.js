@@ -93,7 +93,7 @@ module.exports = function (app) {
                 return;
               }
             if (!result.issues.id(req.body._id))  {
-              res.json({error: 'could not update', '_id': _id })
+              res.json({error: 'could not update', '_id': req.body._id })
               return;
             }
             if (req.body.issue_title){
