@@ -93,19 +93,19 @@ module.exports = function (app) {
                 return;
               }
             if (req.body.issue_title){
-              result.issues.id(req.body._id).issue_title = req.body.issue_title || "";
+              result.issues.id(req.body._id).issue_title = req.body.issue_title;
             }
-            if (req.body.issue_text){
-              result.issues.id(req.body._id).issue_text = req.body.issue_text || "";
-            }
+            // if (req.body.issue_text){
+            //   result.issues.id(req.body._id).issue_text = req.body.issue_text;
+            // }
             if(req.body.created_by){
-              result.issues.id(req.body._id).created_by = req.body.created_by || "";
+              result.issues.id(req.body._id).created_by = req.body.created_by;
             }
             if(req.body.assigned_to){
-              result.issues.id(req.body._id).assigned_to = req.body.assigned_to || "";
+              result.issues.id(req.body._id).assigned_to = req.body.assigned_to;
             }
             if(req.body.status_text){
-              result.issues.id(req.body._id).status_text = req.body.status_text || "";
+              result.issues.id(req.body._id).status_text = req.body.status_text;
             }
             result.issues.id(req.body._id).updated_on = Date();
             // result.issues.id(req.body._id).issue_title = req.body.issue_title;
