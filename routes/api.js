@@ -83,6 +83,13 @@ module.exports = function (app) {
             res.status(404).send('Project was not found');
           }
           else {
+            if (!req.body._id){
+              res.json({ error: 'missing _id' })
+            }
+            if (!req.body.issue_title || !req.body.issue_text || !req.body.created_by ||
+              !req.body.assigned_to || !req.body.status_text){
+                res.json({ error: 'no update field(s) sent', '_id': req.body._id })
+              }
             if (req.body.issue_title){
               result.issues.id(req.body._id).issue_title = req.body.issue_title;
             }
@@ -98,6 +105,7 @@ module.exports = function (app) {
             if(req.body.status_text){
               result.issues.id(req.body._id).status_text = req.body.status_text;
             }
+            result.issues.id(req.body._id).updated_on = Date();
             // result.issues.id(req.body._id).issue_title = req.body.issue_title;
             // result.issues.id(req.body._id).issue_text = req.body.issue_text;
             // result.issues.id(req.body._id).created_by = req.body.created_by;
@@ -106,9 +114,11 @@ module.exports = function (app) {
             result.markModified('issues');
             result.save(function (saveerr, saveresult) {
               if (!saveerr) {
-                res.status(200).send(saveresult);
+                // res.status(200).send(saveresult);
+                res.json({  result: 'successfully updated', '_id': req.body._id })
               } else {
-                res.status(400).send(saveerr.message);
+                res.json({ error: 'could not update', '_id': req.body._id })
+                // res.status(400).send(saveerr.message);
               }
             });
           }
