@@ -141,7 +141,7 @@ module.exports = function (app) {
           } 
           //look for and remove issue
           else {
-            if (!req.body._id){
+            if (!req.body._id || !result.issues.id(req.body._id)){
               res.json({ error: 'missing _id' })
               return;
             }
