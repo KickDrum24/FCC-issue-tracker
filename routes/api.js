@@ -85,10 +85,12 @@ module.exports = function (app) {
           else {
             if (!req.body._id){
               res.json({ error: 'missing _id' })
+              return;
             }
-            if (!req.body.issue_title || !req.body.issue_text || !req.body.created_by ||
-              !req.body.assigned_to || !req.body.status_text){
+            if (!req.body.issue_title && !req.body.issue_text && !req.body.created_by &&
+              !req.body.assigned_to && !req.body.status_text){
                 res.json({ error: 'no update field(s) sent', '_id': req.body._id })
+                return;
               }
             if (req.body.issue_title){
               result.issues.id(req.body._id).issue_title = req.body.issue_title;
