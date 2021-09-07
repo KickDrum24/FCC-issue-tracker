@@ -1,4 +1,3 @@
-console.log("indscript.js reached")
 
 $(function() {
     $('#testForm').submit(function(e) {

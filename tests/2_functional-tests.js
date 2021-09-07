@@ -139,7 +139,6 @@ suite('Functional Tests', function () {
     chai
       .request(server)
       .put("/api/issues/project")
-      // .set("content-type", "application/json")
       .send({
         _id: "6136b4808e0d63892ff11df6",
         created_by: "Karsten",
@@ -156,7 +155,6 @@ suite('Functional Tests', function () {
     chai
       .request(server)
       .put("/api/issues/project")
-      // .set("content-type", "application/json")
       .send({
         _id: "6136b4808e0d63892ff11df6",
         assigned_to: "Puffy",
@@ -174,7 +172,6 @@ suite('Functional Tests', function () {
     chai
       .request(server)
       .put("/api/issues/project")
-      // .set("content-type", "application/json")
       .send({
         _id: "",
 
@@ -191,7 +188,6 @@ suite('Functional Tests', function () {
     chai
       .request(server)
       .put("/api/issues/project")
-      // .set("content-type", "application/json")
       .send({
         _id: "6136b4808e0d63892ff11df6",
       })
@@ -207,7 +203,6 @@ suite('Functional Tests', function () {
     chai
       .request(server)
       .put("/api/issues/project")
-      // .set("content-type", "application/json")
       .send({
         _id: "343567thisisInvalid",
 
@@ -227,7 +222,6 @@ suite('Functional Tests', function () {
       .send({
         _id: deleteID,
       })
-      // .set("content-type", "application/json")
       .end(function (err, res) {
         assert.equal(res.status, 200);
         assert.equal(res.body.result, "successfully deleted")
@@ -242,7 +236,6 @@ suite('Functional Tests', function () {
       .send({
         _id: "6135bf5aaaa37mfbinvalid",
       })
-      // .set("content-type", "application/json")
       .end(function (err, res) {
         assert.equal(res.status, 200);
         assert.equal(res.body.error, "could not delete")
@@ -257,7 +250,6 @@ suite('Functional Tests', function () {
       .send({
         _id: "",
       })
-      // .set("content-type", "application/json")
       .end(function (err, res) {
         assert.equal(res.status, 200);
         assert.equal(res.body.error, "missing _id")

@@ -35,13 +35,11 @@ module.exports = function (app) {
           Object.keys(inquire).forEach(key => inquire[key] ==
             undefined && delete inquire[key])
 
-          console.log(inquire)
           //look for key/value pairs in project issues that match query
           const selectedFilterKeys = Object.keys(inquire);
-          console.log(selectedFilterKeys);
           const filteredIssues = data.issues.filter(ish => selectedFilterKeys.every(key =>
             inquire[key] == ish[key]));
-          // console.log(filteredIssues);
+          
           res.json(filteredIssues);
           //if no query, return all issues 
         } else {
@@ -108,8 +106,8 @@ module.exports = function (app) {
 
     .put(function (req, res) {
       // Update one field on an issue: PUT request to /api/issues/{project}
-      // console.log("put request made")
-      //find user by its id, update its post with what's in req.body
+      
+      //find project
       projectModel.findOne({ name: req.params.project }, (err, result) => {
         if (!err) {
           if (!result) {
@@ -129,6 +127,7 @@ module.exports = function (app) {
               res.json({ error: 'could not update', '_id': req.body._id })
               return;
             }
+            //get info from request
             if (req.body.issue_title) {
               result.issues.id(req.body._id).issue_title = req.body.issue_title;
             }
@@ -144,22 +143,15 @@ module.exports = function (app) {
             if (req.body.status_text) {
               result.issues.id(req.body._id).status_text = req.body.status_text;
             }
+            //Date stamp update
             result.issues.id(req.body._id).updated_on = Date();
-            // result.issues.id(req.body._id).updated_on = Date();
-            // result.issues.id(req.body._id).issue_title = req.body.issue_title;
-            // result.issues.id(req.body._id).issue_text = req.body.issue_text;
-            // result.issues.id(req.body._id).created_by = req.body.created_by;
-            // result.issues.id(req.body._id).assigned_to = req.body.assigned_to;
-            // result.issues.id(req.body._id).status_text = req.body.status_text;
             result.markModified('issues');
             result.save(function (saveerr, saveresult) {
               if (!saveerr) {
-                // res.status(200).send(saveresult);
-                // result.issues.id(req.body._id).updated_on = Date();
                 res.json({ "result": 'successfully updated', '_id': req.body._id })
               } else {
                 res.json({ error: 'could not update', '_id': req.body._id })
-                // res.status(400).send(saveerr.message);
+
               }
             });
           }
@@ -196,19 +188,14 @@ module.exports = function (app) {
             result.markModified('issues');
             result.save(function (saveerr, saveresult) {
               if (!saveerr) {
-                // console.log(req.body._id + " deleted")
-                // res.json({ result: 'successfully deleted', '_id': req.body._id})
                 res.json({ result: 'successfully deleted', '_id': req.body._id });
               } else {
                 res.json({ error: 'could not delete', '_id': req.body._id })
-
-                // res.status(400).send(saveerr.message);
               }
             });
           }
         } else {
           res.json({ error: 'could not delete', '_id': req.body._id })
-          // res.status(400).send(err.message);
         }
       });
     });

@@ -1,4 +1,4 @@
-console.log("ishscript.js reached")
+
 $(function () {
     let currentProject = window.location.pathname.replace(/\//g, "");;
     let url = "/api/issues/" + currentProject;
