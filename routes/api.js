@@ -2,7 +2,8 @@
 const mongoose = require("mongoose");
 const issueModel = require("../mongels.js").Issue;
 const projectModel = require("../mongels.js").Project;
-
+const url = require('url');
+const querystring = require('querystring');
 
 module.exports = function (app) {
 
@@ -16,11 +17,40 @@ module.exports = function (app) {
         if (!data) {
           res.json({});
           return;
+          //check for query string
+        } else if (/\?.+/.test(req.url)) {
+          // populate object with filter fields
+          var inquire = {
+            _id: req.query._id,
+            issue_title: req.query.issue_title,
+            issue_text: req.query.issue_text,
+            created_by: req.query.created_by,
+            assigned_to: req.query.assigned_to,
+            status_text: req.query.status_text,
+            created_on: req.query.created_on,
+            updated_on: req.query.updated_on,
+            open: req.query.open
+          }
+          //remove undefined items from query object
+          Object.keys(inquire).forEach(key => inquire[key] ==
+            undefined && delete inquire[key])
+
+          console.log(inquire)
+          //look for key/value pairs in project issues that match query
+          const selectedFilterKeys = Object.keys(inquire);
+          console.log(selectedFilterKeys);
+          const filteredIssues = data.issues.filter(ish => selectedFilterKeys.every(key =>
+            inquire[key] == ish[key]));
+          // console.log(filteredIssues);
+          res.json(filteredIssues);
+          //if no query, return all issues 
         } else {
+          console.log(data.issues)
           res.json(data.issues)
         }
       })
     })
+
     //post new issue
     .post(function (req, res) {
       //pull project name from url
@@ -45,6 +75,9 @@ module.exports = function (app) {
         created_by: created_by || "",
         assigned_to: assigned_to || "",
         status_text: status_text || "",
+        created_on: Date(),
+        updated_on: Date(),
+        open: true,
       })
       //check database for preexisting project
       projectModel.findOne({ name: project }, (err, data) => {
@@ -75,7 +108,7 @@ module.exports = function (app) {
 
     .put(function (req, res) {
       // Update one field on an issue: PUT request to /api/issues/{project}
-      console.log("put request made")
+      // console.log("put request made")
       //find user by its id, update its post with what's in req.body
       projectModel.findOne({ name: req.params.project }, (err, result) => {
         if (!err) {
@@ -83,34 +116,35 @@ module.exports = function (app) {
             res.status(404).send('Project was not found');
           }
           else {
-            if (!req.body._id){
+            if (!req.body._id) {
               res.json({ error: 'missing _id' })
               return;
             }
             if (!req.body.issue_title && !req.body.issue_text && !req.body.created_by &&
-              !req.body.assigned_to && !req.body.status_text){
-                res.json({ error: 'no update field(s) sent', '_id': req.body._id })
-                return;
-              }
-            if (!result.issues.id(req.body._id))  {
-              res.json({error: 'could not update', '_id': req.body._id })
+              !req.body.assigned_to && !req.body.status_text) {
+              res.json({ error: 'no update field(s) sent', '_id': req.body._id })
               return;
             }
-            if (req.body.issue_title){
+            if (!result.issues.id(req.body._id)) {
+              res.json({ error: 'could not update', '_id': req.body._id })
+              return;
+            }
+            if (req.body.issue_title) {
               result.issues.id(req.body._id).issue_title = req.body.issue_title;
             }
-            if (req.body.issue_text){
+            if (req.body.issue_text) {
               result.issues.id(req.body._id).issue_text = req.body.issue_text;
             }
-            if(req.body.created_by){
+            if (req.body.created_by) {
               result.issues.id(req.body._id).created_by = req.body.created_by;
             }
-            if(req.body.assigned_to){
+            if (req.body.assigned_to) {
               result.issues.id(req.body._id).assigned_to = req.body.assigned_to;
             }
-            if(req.body.status_text){
+            if (req.body.status_text) {
               result.issues.id(req.body._id).status_text = req.body.status_text;
             }
+            result.issues.id(req.body._id).updated_on = Date();
             // result.issues.id(req.body._id).updated_on = Date();
             // result.issues.id(req.body._id).issue_title = req.body.issue_title;
             // result.issues.id(req.body._id).issue_text = req.body.issue_text;
@@ -121,8 +155,8 @@ module.exports = function (app) {
             result.save(function (saveerr, saveresult) {
               if (!saveerr) {
                 // res.status(200).send(saveresult);
-                result.issues.id(req.body._id).updated_on = Date();
-                res.json({  "result" : 'successfully updated', '_id': req.body._id })
+                // result.issues.id(req.body._id).updated_on = Date();
+                res.json({ "result": 'successfully updated', '_id': req.body._id })
               } else {
                 res.json({ error: 'could not update', '_id': req.body._id })
                 // res.status(400).send(saveerr.message);
@@ -143,11 +177,15 @@ module.exports = function (app) {
         if (!err) {
           if (!result) {
             res.status(404).send('project was not found');
-          } 
+          }
           //look for and remove issue
           else {
-            if (!req.body._id || !result.issues.id(req.body._id)){
+            if (!req.body._id) {
               res.json({ error: 'missing _id' })
+              return;
+            }
+            if (!result.issues.id(req.body._id)) {
+              res.json({ error: 'could not delete', '_id': req.body._id })
               return;
             }
             result.issues.id(req.body._id).remove((removeerr, removresult) => {
@@ -158,12 +196,12 @@ module.exports = function (app) {
             result.markModified('issues');
             result.save(function (saveerr, saveresult) {
               if (!saveerr) {
-                console.log(req.body._id + " deleted")
+                // console.log(req.body._id + " deleted")
                 // res.json({ result: 'successfully deleted', '_id': req.body._id})
-                res.json({ result: 'successfully deleted', '_id': req.body._id});
+                res.json({ result: 'successfully deleted', '_id': req.body._id });
               } else {
                 res.json({ error: 'could not delete', '_id': req.body._id })
-                
+
                 // res.status(400).send(saveerr.message);
               }
             });
@@ -173,5 +211,12 @@ module.exports = function (app) {
           // res.status(400).send(err.message);
         }
       });
+    });
+    //Delete ALL issues-
+    app.get('/api/86', (req, res) => {
+      projectModel.deleteMany({ issues : { $exists: true } }, req.body, (err, data) => {
+        !err ? console.log("Deleted Many!") : console.log(err);
+        res.send("All issues have been deleted")
+      })
     });
 };
